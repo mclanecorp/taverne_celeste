@@ -1,0 +1,27 @@
+image: node:latest
+
+stages:
+  - test
+  - coverage
+
+cache:
+  paths:
+    - node_modules/
+
+install_dependencies:
+  stage: test
+  script:
+    - npm install
+
+run_tests:
+  stage: test
+  script:
+    - npm test
+
+coverage_report:
+  stage: coverage
+  script:
+    - npm run test:coverage
+  artifacts:
+    paths:
+      - coverage.lcov
