@@ -13,52 +13,74 @@ export class Tavern {
   }
 
   modifyItem() {
-    for (let i = 0; i < this.items.length; i++) {
-      if (this.items[i].name != 'Darnassian Blue Cheese' && this.items[i].name != 'Invitations to a Mystical concert') {
-        if (this.items[i].quality > 0) {
-          if (this.items[i].name != 'Atiesh, Greatstaff of the Guardian') {
-            this.items[i].quality = this.items[i].quality - 1;
-          }
-        }
-      } else {
-        if (this.items[i].quality < 50) {
-          this.items[i].quality = this.items[i].quality + 1;
-          if (this.items[i].name == 'Invitations to a Mystical concert') {
-            if (this.items[i].expiration < 11) {
-              if (this.items[i].quality < 50) {
-                this.items[i].quality = this.items[i].quality + 1;
-              }
-            }
-            if (this.items[i].expiration < 6) {
-              if (this.items[i].quality < 50) {
-                this.items[i].quality = this.items[i].quality + 1;
-              }
-            }
-          }
-        }
+    this.items.forEach(item => {
+      if (item.name === 'Atiesh, Greatstaff of the Guardian') {
+        return;
       }
-      if (this.items[i].name != 'Atiesh, Greatstaff of the Guardian') {
-        this.items[i].expiration = this.items[i].expiration - 1;
+
+      if (item.name === 'Darnassian Blue Cheese') {
+        this.updateDarnassianBlueCheese(item);
+      } else if (item.name === 'Invitations to a Mystical concert') {
+        this.updateInvitationsToMysticalConcert(item);
+      } else if (item.name.startsWith('Accursed')) { // Assuming Accursed items start with 'Accursed'
+        this.updateAccursedItem(item);
+      }else {
+        this.updateNormalItem(item);
       }
-      if (this.items[i].expiration < 0) {
-        if (this.items[i].name != 'Darnassian Blue Cheese') {
-          if (this.items[i].name != 'Invitations to a Mystical concert') {
-            if (this.items[i].quality > 0) {
-              if (this.items[i].name != 'Atiesh, Greatstaff of the Guardian') {
-                this.items[i].quality = this.items[i].quality - 1;
-              }
-            }
-          } else {
-            this.items[i].quality = this.items[i].quality - this.items[i].quality;
-          }
-        } else {
-          if (this.items[i].quality < 50) {
-            this.items[i].quality = this.items[i].quality + 1;
-          }
-        }
-      }
-    }
+
+      item.expiration--;
+    });
 
     return this.items;
   }
+
+  updateNormalItem(item) {
+    item.quality--;
+    if (item.expiration <= 0) {
+      item.quality--;
+    }
+    this.ensureQualityWithinBounds(item);
+  }
+
+  updateDarnassianBlueCheese(item) {
+    item.quality++;
+
+    this.ensureQualityWithinBounds(item);
+  }
+
+  updateInvitationsToMysticalConcert(item) {
+    if (item.expiration <= 0) {
+      item.quality = 0;
+    } else if (item.expiration < 6) {
+      item.quality += 3;
+    } else if (item.expiration < 11) {
+      item.quality += 2;
+    } else {
+      item.quality++;
+    }
+    this.ensureQualityWithinBounds(item);
+  }
+
+  ensureQualityWithinBounds(item) {
+    if (item.quality < 0) {
+      item.quality = 0;
+    } else if (item.quality > 50) {
+      item.quality = 50;
+    }
+  }
+  updateAccursedItem(item) {
+    item.quality -= 2;
+    if (item.expiration <= 0) {
+      item.quality -= 2;
+    }
+    this.ensureQualityWithinBounds(item);
+  }
 }
+
+
+
+
+
+
+
+

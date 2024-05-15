@@ -28,7 +28,7 @@ npm run test:watch
 4. Générer un rapport de couverture de code :
 
 ```bash
-npm run test:coverage
+`npm run test:coverage`
 ```
 
 5. Exécuter la _fixture_ pour 30 jours :
